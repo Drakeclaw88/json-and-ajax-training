@@ -7,10 +7,23 @@ buttonFetchAnimals.addEventListener("click", function () {
     let request = new XMLHttpRequest();
     request.open('GET', 'https://learnwebcode.github.io/json-example/animals-' + pageCounter + '.json')
     request.onload = function () {
-        let petData = JSON.parse(request.responseText);
-        addHTML(petData);
+
+        if(request.status >= 200 && request.status < 400){
+            let petData = JSON.parse(request.responseText);
+            addHTML(petData);
+
+        }
+        else{
+            console.log("we connected to the server but it returned error")
+        }
+
 
     };
+
+    request.onerror = function(){
+
+        console.log("connection error")
+    }
     request.send();
     pageCounter++;
     if (pageCounter > 3) {
@@ -27,16 +40,26 @@ function addHTML(data) {
         htmlString += "<p>" + data[i].name +  " is a " + data[i].species + " that likes to eat ";
 
         for (let ii = 0; ii < data[i].foods.likes.length; ii++) {
-            htmlString += data[i].foods.likes[ii];
-            
+            if (ii == 0){
+                htmlString += data[i].foods.likes[ii];
+            }
+            else{
+                htmlString += " and " + data[i].foods.likes[ii];
+            }
         }
 
+        htmlString += ' and dislikes ';
+        for (let ii = 0; ii < data[i].foods.dislikes.length; ii++) {
+            if (ii == 0){
+                htmlString += data[i].foods.dislikes[ii];
+            }
+            else{
+                htmlString += " and " + data[i].foods.dislikes[ii];
+            }
+        }
+        htmlString += '.</p>';
     };
-        
     animalView.insertAdjacentHTML('beforeend', htmlString);
-
-
-
 }
 
 
